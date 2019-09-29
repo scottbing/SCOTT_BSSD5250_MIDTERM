@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name='SB_BSSD5250_MIDTERM'
