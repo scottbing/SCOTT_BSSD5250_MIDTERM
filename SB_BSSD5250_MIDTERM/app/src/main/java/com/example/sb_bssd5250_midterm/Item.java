@@ -1,8 +1,5 @@
 package com.example.sb_bssd5250_midterm;
 
-import android.media.Image;
-import android.widget.ImageView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Date;
@@ -10,7 +7,7 @@ import java.util.Date;
 public class Item {
 
     private String caption;
-    private ImageView item;
+    private int item;
 
     public Item() {
     }
@@ -19,11 +16,11 @@ public class Item {
         return caption;
     }
 
-    public ImageView getItem() {
+    public int getItem() {
         return item;
     }
 
-    public void setItem(ImageView item) {
+    public void setItem(int item) {
         this.item = item;
     }
 

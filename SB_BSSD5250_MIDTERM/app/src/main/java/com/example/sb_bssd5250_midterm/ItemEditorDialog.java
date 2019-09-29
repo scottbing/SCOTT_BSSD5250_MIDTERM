@@ -19,7 +19,6 @@ public class ItemEditorDialog extends DialogFragment {
     public static final String EXTRA_NAME = "com.example.sb_bssd5250_midterm";
 
     private EditText captionText;
-    private ImageView itemImage;
 
     private int position;
 
@@ -37,8 +36,6 @@ public class ItemEditorDialog extends DialogFragment {
             captionText.setHintTextColor(Color.parseColor("#03fcf0"));
         }
 
-        itemImage = new ImageView(getActivity());
-
         // this is taken from: https://stackoverflow.com/questions/12876624/multiple-edittext-objects-in-alertdialog
         LinearLayout alertLayout = new LinearLayout(getContext());
         alertLayout.setOrientation(LinearLayout.VERTICAL);
@@ -52,7 +49,6 @@ public class ItemEditorDialog extends DialogFragment {
                 .setPositiveButton("Done", doneClickedListener)
                 .setNegativeButton("Cancel", null)
                 .create();
-
     }
 
     private void sendResult(int resultCode) {
@@ -70,7 +66,6 @@ public class ItemEditorDialog extends DialogFragment {
         public void onClick(DialogInterface dialogInterface, int i) {
             //Log.d("itemEditorDialog", captionText.getText().toString());
             ItemsData.getInstance(null).getItemList().get(position).setCaption(captionText.getText().toString());
-            ItemsData.getInstance(null).getItemList().get(position).setItem(itemImage);
             ItemsData.getInstance(null).refreshItems();
         }
     };

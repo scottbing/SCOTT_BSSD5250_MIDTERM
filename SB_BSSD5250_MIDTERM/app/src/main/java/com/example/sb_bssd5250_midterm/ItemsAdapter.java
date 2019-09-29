@@ -8,6 +8,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -21,10 +22,12 @@ ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
     private static int EDITOR_REQUEST = 1;
 
     private static int CAPTION_ID = View.generateViewId();
+    private static int IMAGE_ID = View.generateViewId();
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView captionView;
+        ImageView imageView;
 
         int position = -1;
 
@@ -32,6 +35,7 @@ ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
             super(itemView);
 
             captionView = itemView.findViewById(CAPTION_ID);
+            imageView = itemView.findViewById(IMAGE_ID);
 
         }
 
@@ -86,12 +90,10 @@ ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
         int size = 20;
         TextView captionView = new TextView(mContext);
         captionView.setTextSize(TypedValue. COMPLEX_UNIT_SP, size);
-        TextView dateView = new TextView(mContext);
-        dateView.setTextSize(TypedValue. COMPLEX_UNIT_SP, size);
-        TextView descView = new TextView(mContext);
-        descView.setTextSize (TypedValue. COMPLEX_UNIT_SP, size);
+        ImageView imageView = new ImageView(mContext);
 
         captionView.setId(CAPTION_ID);
+        imageView.setId(IMAGE_ID);
 
         Button editButton = new Button(mContext);
         editButton.setText("Edit");
@@ -105,9 +107,7 @@ ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
         buttonLL.addView(deleteButton);
 
         linearLayout.addView(captionView);
-        linearLayout.addView(dateView);
-        linearLayout.addView(descView);
-        linearLayout.addView(buttonLL);
+        linearLayout.addView(imageView);
 
         ViewHolder vh = new ViewHolder(linearLayout);
         editButton.setOnClickListener(vh.editClickedListener);
@@ -123,6 +123,7 @@ ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
         Item item = ItemsData.getInstance(mContext).getItemList().get(position);
         //the holder the adapter already made for this item is now populated
         holder.captionView.setText(item.getCaption());
+        holder.imageView.setImageResource(item.getItem());
         holder.position = position;
 
     }

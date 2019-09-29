@@ -101,10 +101,7 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
         for (int j=0; j<aDrawable.length; j++) {
             Item item = new Item();
             item.setCaption("Caption " + String.valueOf(j+1));
-            ImageView image = new ImageView(this);
-            //image.setImageDrawable(ContextCompat.getDrawable(this, aDrawable[j]));
-            image.setImageResource(aDrawable[j]);
-            item.setItem(image);
+            item.setItem(aDrawable[j]);
             ItemsData.getInstance(this).getItemList().add(item);
         }
     }
