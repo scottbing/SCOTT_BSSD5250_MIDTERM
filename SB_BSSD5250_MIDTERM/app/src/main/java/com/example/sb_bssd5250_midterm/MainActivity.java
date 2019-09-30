@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
     private int i = 1;
     private static String LOGID = "MainActivity";
     private static int RESULT_LOAD_IMAGE = 1;
-    private String latitude, longitude;
+    private Double latitude, longitude;
     private EditText latText;
     private EditText lonText;
 
@@ -176,12 +176,21 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             //Log.d("submitClickedListener", captionText.getText().toString());
-            
+
+            latitude = Double.valueOf(latText.getText().toString());
+            longitude = Double.valueOf(lonText.getText().toString());
+
               // get map - no result expected
-            Intent passableData = new Intent(getApplicationContext(), MapWithMarker.class);
-            passableData.putExtra("latitude", latitude);
-            passableData.putExtra("longitude", longitude);
-            startActivity(passableData);
+            Intent passCoords = new Intent(getApplicationContext(), MapWithMarker.class);
+            Bundle b = new Bundle();
+            b.putDouble("latitude", latitude);
+            b.putDouble("longitude", longitude);
+            passCoords.putExtras(b);
+            startActivity(passCoords);
+
+            /*passableData.putExtra("latitude", Double.toString(latitude));
+            passableData.putExtra("longitude", Double.toString(longitude));
+            startActivity(passableData)*/;
         }
     };
 

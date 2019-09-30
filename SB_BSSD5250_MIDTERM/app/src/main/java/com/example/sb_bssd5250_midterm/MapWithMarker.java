@@ -2,6 +2,7 @@ package com.example.sb_bssd5250_midterm;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -14,13 +15,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapWithMarker extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private int Lat;
-    private int Lon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_with_marker);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -41,8 +41,14 @@ public class MapWithMarker extends FragmentActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        // get coordinates
+        Bundle b = getIntent().getExtras();
+        double lat = b.getDouble("latitude");
+        double lon = b.getDouble("longitude");
+
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
+        // LatLng sydney = new LatLng(-34, 151);
+        LatLng sydney = new LatLng(lat, lon);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
