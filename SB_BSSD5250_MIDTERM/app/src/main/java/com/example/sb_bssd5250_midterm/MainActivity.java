@@ -1,11 +1,14 @@
 package com.example.sb_bssd5250_midterm;
 
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.content.Intent;
 import android.database.Cursor;
@@ -19,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import java.io.File;
@@ -33,6 +37,9 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
     private int i = 1;
     private static String LOGID = "MainActivity";
     private static int RESULT_LOAD_IMAGE = 1;
+    private String latitude, longitude;
+    private EditText latText;
+    private EditText lonText;
 
     @Override
     public void updateItemsDependents() {
@@ -73,12 +80,20 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
         //make this button save a new item when clicked
         saveItemButton.setOnClickListener(saveClickedListener);
 
+        Button mapItemButton = new Button( this);
+        mapItemButton.setText("Get Map");
+        mapItemButton.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,  ViewGroup.LayoutParams.WRAP_CONTENT));
+        //make this button call the MapWithMarker Activity
+        mapItemButton.setOnClickListener(mapClickedListener);
+
         // got this from the instructor
         LinearLayout linearLayout = new LinearLayout( this);
         LinearLayout buttonLL =  new  LinearLayout(this);
         buttonLL.setOrientation(LinearLayout.HORIZONTAL);
         buttonLL.addView(addItemButton);
         buttonLL.addView(saveItemButton);
+        buttonLL.addView(mapItemButton);
 
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
@@ -117,10 +132,56 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
             Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(i, RESULT_LOAD_IMAGE);
             //item.setItem("Item");
+
             ItemsData.getInstance(MainActivity.this).getItemList().add(item);
             ItemsData.getInstance(null).refreshItems();
 
 
+        }
+    };
+
+    private View.OnClickListener mapClickedListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Log.d("mapClick Listener", "add clicked");
+
+            latText = new EditText(MainActivity.this);
+            latText.setHint("Enter Latitude");
+            latText.setHintTextColor(Color.parseColor("#03fcf0"));
+
+            lonText = new EditText(MainActivity.this);
+            lonText.setHint("Enter Longitude");
+            lonText.setHintTextColor(Color.parseColor("#03fcf0"));
+
+
+            // this is taken from: https://stackoverflow.com/questions/12876624/multiple-edittext-objects-in-alertdialog
+            LinearLayout alertLayout = new LinearLayout(MainActivity.this);
+            alertLayout.setOrientation(LinearLayout.VERTICAL);
+            alertLayout.setId(View.generateViewId());
+
+            alertLayout.addView(latText);
+            alertLayout.addView(lonText);
+
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("Enter Coordinates")
+                    .setView(alertLayout)
+                    .setPositiveButton("Submit", submitClickedListener)
+                    .setNegativeButton("Cancel", null)
+                    .create()
+                    .show();
+        }
+    };
+
+    private DialogInterface.OnClickListener submitClickedListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            //Log.d("submitClickedListener", captionText.getText().toString());
+            
+              // get map - no result expected
+            Intent passableData = new Intent(getApplicationContext(), MapWithMarker.class);
+            passableData.putExtra("latitude", latitude);
+            passableData.putExtra("longitude", longitude);
+            startActivity(passableData);
         }
     };
 

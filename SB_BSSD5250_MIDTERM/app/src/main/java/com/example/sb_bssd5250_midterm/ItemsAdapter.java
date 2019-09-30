@@ -105,9 +105,9 @@ ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
         buttonLL.setOrientation(LinearLayout.HORIZONTAL);
         buttonLL.addView(editButton);
         buttonLL.addView(deleteButton);
-
         linearLayout.addView(captionView);
         linearLayout.addView(imageView);
+        linearLayout.addView(buttonLL);
 
         ViewHolder vh = new ViewHolder(linearLayout);
         editButton.setOnClickListener(vh.editClickedListener);
