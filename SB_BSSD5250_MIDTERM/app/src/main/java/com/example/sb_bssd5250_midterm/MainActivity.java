@@ -3,12 +3,15 @@ package com.example.sb_bssd5250_midterm;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.content.Intent;
 import android.database.Cursor;
@@ -29,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsDataUpdatedListener {
 
@@ -41,6 +45,19 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
     private EditText latText;
     private EditText lonText;
 
+    // handle Android Runtime Permissions
+    // required for SDK 23 and above
+    // boilerplate Android Runtime Permissions Code taken from:
+    // https://stackoverflow.com/questions/33162152/storage-permission-error-in-marshmallow/41221852#41221852
+    private String[] permissions = new String[]{
+            Manifest.permission.INTERNET,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.VIBRATE,
+            Manifest.permission.RECORD_AUDIO,
+    };
+
     @Override
     public void updateItemsDependents() {
         ItemsAdapter itemsAdapter = new ItemsAdapter();
@@ -52,6 +69,9 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
     protected void onCreate(Bundle savedInstanceState)	{
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_main);
+
+        // Ask for  Runtime Permissions
+        checkPermissions();
 
         // setup an array of items
         ArrayList<Item> itemsArray = ItemsData.getInstance(this).getItemList();
@@ -125,17 +145,13 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
         @Override
         public void onClick(View view) {
             Log.d("addClick Listener", "add clicked");
-            Item item = new Item();
-            item.setCaption("Caption");
 
             // get image
             Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(i, RESULT_LOAD_IMAGE);
             //item.setItem("Item");
 
-            ItemsData.getInstance(MainActivity.this).getItemList().add(item);
-            ItemsData.getInstance(null).refreshItems();
-
+            //Uri selectedImageURI = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
         }
     };
@@ -145,10 +161,12 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
         public void onClick(View view) {
             Log.d("mapClick Listener", "add clicked");
 
+            // set up latitude
             latText = new EditText(MainActivity.this);
             latText.setHint("Enter Latitude");
             latText.setHintTextColor(Color.parseColor("#03fcf0"));
 
+            // set up longitude
             lonText = new EditText(MainActivity.this);
             lonText.setHint("Enter Longitude");
             lonText.setHintTextColor(Color.parseColor("#03fcf0"));
@@ -188,9 +206,6 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
             passCoords.putExtras(b);
             startActivity(passCoords);
 
-            /*passableData.putExtra("latitude", Double.toString(latitude));
-            passableData.putExtra("longitude", Double.toString(longitude));
-            startActivity(passableData)*/;
         }
     };
 
@@ -200,21 +215,36 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // establish an Item instance
+        Item item = new Item();
+        item.setCaption("Caption");
+
+
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
+
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
             Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
             cursor.moveToFirst();
 
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
+            item.setImageFileName(cursor.getString(columnIndex));
             cursor.close();
 
-            // String picturePath contains the path of selected Image
+            item.setItem(0);
+            //item.setItem(R.drawable.d);
+            ItemsData.getInstance(MainActivity.this).getItemList().add(item);
+            ItemsData.getInstance(null).refreshItems();
 
-            ImageView imageView = new ImageView(this);
-            imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            //Drawable drawable = Drawable.createFromPath(picturePath);
+
+
+
+            // convert picture path to drawable
+            // https://stackoverflow.com/questions/5834221/android-drawable-from-file-path
+
+            int k=0;
         }
     }
 
@@ -288,6 +318,33 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
             Log.d(LOGID, s);
         } catch (Exception e) { //handle exception from string creation
             Log.d(LOGID, e.toString());
+        }
+    }
+
+    private boolean checkPermissions() {
+        int result;
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        for (String p : permissions) {
+            result = ContextCompat.checkSelfPermission(this, p);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(p);
+            }
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 100);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == 100) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // do something
+            }
+            return;
         }
     }
 

@@ -1,6 +1,10 @@
 package com.example.sb_bssd5250_midterm;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,9 +16,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class
 ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
@@ -123,7 +135,16 @@ ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
         Item item = ItemsData.getInstance(mContext).getItemList().get(position);
         //the holder the adapter already made for this item is now populated
         holder.captionView.setText(item.getCaption());
-        holder.imageView.setImageResource(item.getItem());
+        if (item.getItem()==0) {
+            File imageFile = new File(item.getImageFileName());
+            if(imageFile.exists()){
+                Bitmap myBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+                holder.imageView.setImageBitmap(myBitmap);
+
+            }
+        } else {
+            holder.imageView.setImageResource(item.getItem());
+        }
         holder.position = position;
 
     }
@@ -133,6 +154,4 @@ ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
         //return number of items in the ItemsData list so the adapter can create its internal for loop
         return ItemsData.getInstance(mContext).getItemList().size();
     }
-
-
 }
