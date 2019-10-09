@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity  implements ItemsData.ItemsD
         ArrayList<Item> itemsArray = ItemsData.getInstance(this).getItemList();
 
         ItemsData.getInstance(this).setListener(this);
-        makeDummyData(3);
+        //makeDummyData(3);
         itemsRV	= new RecyclerView(  this);
         itemsRV.setBackgroundColor(Color.RED);
 
